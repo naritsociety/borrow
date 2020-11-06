@@ -11,6 +11,7 @@
 namespace Gcms;
 
 use Kotchasan\Curl;
+use Kotchasan\Text;
 
 /**
  *  LINE Notify Class
@@ -49,7 +50,8 @@ class Line extends \Kotchasan\KBase
             foreach (explode("\n", strip_tags($message)) as $row) {
                 $msg[] = trim($row);
             }
-            $result = $ch->post('https://notify-api.line.me/api/notify', array('message' => implode("\n", $msg)));
+            $msg = Text::unhtmlspecialchars(implode("\n", $msg));
+            $result = $ch->post('https://notify-api.line.me/api/notify', array('message' => $msg));
             if ($ch->error()) {
                 return $ch->errorMessage();
             } else {

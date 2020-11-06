@@ -67,6 +67,7 @@ class Model
             ),
             'report' => array(
                 'text' => '{LNG_Report}',
+                'url' => 'index.php?module=report',
                 'submenus' => array(),
             ),
             'settings' => array(

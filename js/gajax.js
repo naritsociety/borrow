@@ -436,63 +436,46 @@ window.$K = (function() {
     if (Object.isString(d)) {
       d = new Date(d.replace(/-/g, '/'));
     }
-    var date = d.getDate(),
-      month = d.getMonth(),
-      year = d.getFullYear(),
-      dateStr = this.getDate(),
-      monthStr = this.getMonth(),
-      yearStr = this.getFullYear(),
-      theYear = yearStr - year,
-      theMonth = monthStr - month,
-      theDate = dateStr - date,
-      days = 0;
-    if (
-      monthStr == 0 ||
-      monthStr == 2 ||
-      monthStr == 4 ||
-      monthStr == 6 ||
-      monthStr == 7 ||
-      monthStr == 9 ||
-      monthStr == 11
-    ) {
-      days = 31;
+    var days = Math.floor((this.getTime() - d.getTime()) / 86400000),
+      numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (days < 0) {
+      var fromDate = this.getDate(),
+        fromMonth = this.getMonth(),
+        fromYear = this.getFullYear(),
+        toDate = d.getDate(),
+        toMonth = d.getMonth(),
+        toYear = d.getFullYear();
+      if (d.isLeapYear()) {
+        numDays[1] = 29;
+      }
+    } else {
+      var fromDate = d.getDate(),
+        fromMonth = d.getMonth(),
+        fromYear = d.getFullYear(),
+        toDate = this.getDate(),
+        toMonth = this.getMonth(),
+        toYear = this.getFullYear();
+      if (this.isLeapYear()) {
+        numDays[1] = 29;
+      }
     }
-    if (monthStr == 3 || monthStr == 5 || monthStr == 8 || monthStr == 10) {
-      days = 30;
+    var diffYear = toYear - fromYear,
+      diffMonth = toMonth - fromMonth,
+      diffDate = toDate - fromDate;
+    if (diffDate < 0) {
+      diffMonth--;
+      toMonth = 0 ? 11 : toMonth - 1;
+      diffDate = numDays[toMonth] + diffDate;
     }
-    if (monthStr == 1) {
-      days = 28;
-    }
-    var inYears = theYear;
-    var inMonths = theMonth;
-    if (month < monthStr && date > dateStr) {
-      inYears = floatval(inYears) + 1;
-      inMonths = theMonth - 1;
-    }
-    if (month < monthStr && date <= dateStr) {
-      inMonths = theMonth;
-    } else if (month == monthStr && (date < dateStr || date == dateStr)) {
-      inMonths = 0;
-    } else if (month == monthStr && date > dateStr) {
-      inMonths = 11;
-    } else if (month > monthStr && date <= dateStr) {
-      inYears = inYears - 1;
-      inMonths = 12 - -theMonth + 1;
-    } else if (month > monthStr && date > dateStr) {
-      inMonths = 12 - -theMonth;
-    }
-    var inDays = theDate;
-    if (date > dateStr) {
-      inYears = inYears - 1;
-      inDays = days - -theDate;
-    } else if (date == dateStr) {
-      inDays = 0;
+    if (diffMonth < 0) {
+      diffYear--;
+      diffMonth = 12 + diffMonth;
     }
     return {
-      day: inDays,
-      month: inMonths,
-      year: inYears,
-      days: Math.floor(Math.abs(this.getTime() - d.getTime()) / 86400000)
+      day: diffDate,
+      month: diffMonth,
+      year: diffYear,
+      days: days
     };
   };
   Date.monthNames = [
