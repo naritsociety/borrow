@@ -1,0 +1,1 @@
+<?php exit?>a:1:{i:0;a:4:{s:7:"pending";i:0;s:8:"returned";i:0;s:9:"confirmed";i:0;s:10:"allpending";i:0;}}
